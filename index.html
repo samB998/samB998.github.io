@@ -1,0 +1,548 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sam Adalioglu — Cybersecurity</title>
+<meta name="description" content="Sam Adalioglu — cybersecurity & networking. Home lab, SIEM tooling, threat detection, and verifiable credentials." />
+
+<!-- ============================================================= -->
+<!--  FONTS                                                        -->
+<!-- ============================================================= -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* =============================================================
+   TOKENS
+   ============================================================= */
+:root{
+  --void:#0A0A0B;      /* page */
+  --panel:#101012;     /* raised surfaces */
+  --raise:#16161A;
+  --line:#232327;      /* hairlines */
+  --line-bright:#34343A;
+  --ink:#F4F1EA;       /* warm white, high emphasis */
+  --ink-mid:#B4B2AC;
+  --ink-low:#6E6E69;
+  --brass:#E0A340;     /* the one accent — used sparingly */
+  --brass-dim:#8A6A2E;
+
+  --display:'Bricolage Grotesque', sans-serif;
+  --body:'IBM Plex Sans', sans-serif;
+  --mono:'IBM Plex Mono', monospace;
+
+  --edge: clamp(1.25rem, 5vw, 5rem);   /* horizontal page inset */
+  --maxw: 1180px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  background:var(--void);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:clamp(15px,1.05vw,17px);
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* subtle film grain so the black never reads flat */
+body::before{
+  content:"";
+  position:fixed; inset:0; z-index:1; pointer-events:none;
+  opacity:.035; mix-blend-mode:screen;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* cursor spotlight — the black canvas reacts to you */
+#spot{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:radial-gradient(560px circle at var(--mx,50%) var(--my,-20%),
+             rgba(224,163,64,.10), rgba(224,163,64,.03) 40%, transparent 62%);
+  transition:opacity .4s ease; opacity:0;
+}
+
+a{color:inherit}
+::selection{background:var(--brass);color:var(--void)}
+:focus-visible{outline:2px solid var(--brass); outline-offset:3px; border-radius:2px}
+
+/* =============================================================
+   LAYOUT PRIMITIVES
+   ============================================================= */
+.wrap{max-width:var(--maxw); margin-inline:auto; padding-inline:var(--edge); position:relative; z-index:2}
+
+.eyebrow{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.22em;
+  text-transform:uppercase; color:var(--ink-low);
+  display:flex; align-items:center; gap:.6rem;
+}
+.eyebrow::before{content:"·"; color:var(--brass); font-size:1.2em}
+
+/* =============================================================
+   NAV
+   ============================================================= */
+nav{
+  position:fixed; top:0; left:0; right:0; z-index:20;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.1rem var(--edge);
+  backdrop-filter:blur(8px);
+  background:linear-gradient(var(--void), rgba(10,10,11,0));
+  transition:background .3s, border-color .3s;
+  border-bottom:1px solid transparent;
+}
+nav.stuck{background:rgba(10,10,11,.82); border-bottom-color:var(--line)}
+.monogram{
+  font-family:var(--display); font-weight:800; font-size:1.1rem;
+  letter-spacing:-.02em; text-decoration:none;
+  border:1px solid var(--line-bright); border-radius:6px;
+  padding:.28rem .5rem; line-height:1;
+}
+.monogram:hover{border-color:var(--brass); color:var(--brass)}
+.nav-links{display:flex; gap:1.6rem; font-family:var(--mono); font-size:.78rem; letter-spacing:.04em}
+.nav-links a{color:var(--ink-mid); text-decoration:none; position:relative}
+.nav-links a::after{
+  content:""; position:absolute; left:0; bottom:-4px; height:1px; width:0;
+  background:var(--brass); transition:width .25s ease;
+}
+.nav-links a:hover{color:var(--ink)} .nav-links a:hover::after{width:100%}
+@media(max-width:720px){ .nav-links{display:none} }
+
+/* =============================================================
+   HERO
+   ============================================================= */
+.hero{
+  min-height:100svh; display:flex; flex-direction:column; justify-content:center;
+  padding-top:6rem; padding-bottom:4rem;
+}
+.hero .tag{ margin-bottom:1.6rem }
+
+.bigname{
+  font-family:var(--display); font-weight:800;
+  line-height:.9; letter-spacing:-.03em; margin:0;
+  font-size:clamp(3.4rem, 15vw, 12rem);
+}
+.bigname .l1{ display:block; color:var(--ink) }
+.bigname .l2{
+  display:block; color:transparent;
+  -webkit-text-stroke:1.5px var(--ink-mid);
+  transition:-webkit-text-stroke-color .5s;
+}
+.hero:hover .bigname .l2{ -webkit-text-stroke-color:var(--brass-dim) }
+
+.hero-line{
+  margin:2rem 0 0; max-width:48ch;
+  font-size:clamp(1.05rem,1.8vw,1.35rem); color:var(--ink-mid);
+}
+.hero-line b{color:var(--ink); font-weight:600}
+
+.hero-meta{
+  margin-top:2.4rem; display:flex; flex-wrap:wrap; gap:.6rem 1.4rem;
+  font-family:var(--mono); font-size:.78rem; color:var(--ink-low);
+  letter-spacing:.03em;
+}
+.hero-meta span{display:inline-flex; align-items:center; gap:.5rem}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--brass);box-shadow:0 0 10px var(--brass)}
+
+/* reveal-on-load */
+.rise{opacity:0; transform:translateY(18px); animation:rise .9s cubic-bezier(.2,.7,.2,1) forwards}
+.rise.d1{animation-delay:.05s}.rise.d2{animation-delay:.18s}
+.rise.d3{animation-delay:.31s}.rise.d4{animation-delay:.44s}
+@keyframes rise{to{opacity:1; transform:none}}
+
+/* =============================================================
+   SECTION SHELL
+   ============================================================= */
+section.block{padding-block:clamp(4.5rem,10vw,8rem); border-top:1px solid var(--line)}
+.block-head{display:flex; flex-direction:column; gap:1rem; margin-bottom:3rem}
+.block-head h2{
+  font-family:var(--display); font-weight:700; letter-spacing:-.02em;
+  font-size:clamp(1.8rem,4vw,2.9rem); margin:0; max-width:22ch;
+}
+
+/* ABOUT */
+.about-grid{display:grid; grid-template-columns:1fr; gap:2.2rem}
+@media(min-width:820px){ .about-grid{grid-template-columns:1.3fr .9fr; gap:4rem} }
+.about-body p{margin:0 0 1.1rem; color:var(--ink-mid); max-width:60ch}
+.about-body p b{color:var(--ink); font-weight:600}
+.stack-title{font-family:var(--mono); font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--ink-low); margin-bottom:1rem}
+.chips{display:flex; flex-wrap:wrap; gap:.5rem}
+.chip{
+  font-family:var(--mono); font-size:.78rem; color:var(--ink-mid);
+  border:1px solid var(--line-bright); border-radius:100px; padding:.34rem .8rem;
+  transition:.2s;
+}
+.chip:hover{border-color:var(--brass); color:var(--ink); transform:translateY(-2px)}
+
+/* =============================================================
+   EXPERIENCE
+   ============================================================= */
+.xp{
+  display:grid; grid-template-columns:1fr; gap:.6rem 2.5rem;
+  padding:2rem 0; border-bottom:1px solid var(--line);
+}
+.xp:first-of-type{border-top:1px solid var(--line)}
+@media(min-width:760px){ .xp{grid-template-columns:15rem 1fr} }
+.xp .when{font-family:var(--mono); font-size:.78rem; color:var(--ink-low); letter-spacing:.03em; padding-top:.3rem}
+.xp .when b{display:block; color:var(--ink-mid); font-weight:500; margin-top:.35rem}
+.xp h3{font-family:var(--display); font-weight:700; font-size:clamp(1.2rem,2.4vw,1.6rem); margin:0 0 .2rem; letter-spacing:-.01em}
+.xp .org{font-family:var(--mono); font-size:.82rem; color:var(--brass); margin-bottom:.9rem}
+.xp ul{margin:0; padding-left:1.1rem; color:var(--ink-mid)}
+.xp li{margin:0 0 .5rem} .xp li::marker{color:var(--brass-dim)}
+
+/* =============================================================
+   PROJECTS — expanding list
+   ============================================================= */
+.proj{
+  display:grid; grid-template-columns:auto 1fr auto; align-items:baseline;
+  gap:1.2rem; padding:1.9rem 0; border-bottom:1px solid var(--line);
+  text-decoration:none; position:relative; transition:padding .35s;
+}
+.proj:first-of-type{border-top:1px solid var(--line)}
+.proj .idx{font-family:var(--mono); font-size:.8rem; color:var(--ink-low); padding-top:.4rem}
+.proj .body{min-width:0}
+.proj h3{
+  font-family:var(--display); font-weight:700; letter-spacing:-.01em;
+  font-size:clamp(1.35rem,3.2vw,2rem); margin:0; color:var(--ink);
+  transition:color .3s;
+}
+.proj .desc{
+  color:var(--ink-mid); margin:0; max-width:64ch;
+  max-height:0; opacity:0; overflow:hidden;
+  transition:max-height .45s ease, opacity .35s ease, margin .35s ease;
+}
+.proj .tags{display:flex; gap:.5rem; flex-wrap:wrap; margin-top:.9rem}
+.proj .tags span{font-family:var(--mono); font-size:.72rem; color:var(--ink-low)}
+.proj .tags span::before{content:"["; color:var(--brass-dim)}
+.proj .tags span::after{content:"]"; color:var(--brass-dim)}
+.proj .arrow{font-family:var(--mono); color:var(--ink-low); align-self:center; transition:.3s; font-size:1.1rem}
+.proj:hover, .proj:focus-visible{padding-left:.6rem}
+.proj:hover h3, .proj:focus-visible h3{color:var(--brass)}
+.proj:hover .desc, .proj:focus-visible .desc{max-height:240px; opacity:1; margin-top:.7rem}
+.proj:hover .arrow, .proj:focus-visible .arrow{color:var(--brass); transform:translate(4px,-4px)}
+@media(hover:none){ .proj .desc{max-height:240px; opacity:1; margin-top:.7rem} }
+
+/* =============================================================
+   CREDENTIALS — terminal ledger
+   ============================================================= */
+.ledger{border:1px solid var(--line); border-radius:10px; overflow:hidden; background:linear-gradient(var(--panel),var(--void))}
+.ledger-note{font-family:var(--mono); font-size:.74rem; color:var(--ink-low); margin:1rem 0 0; letter-spacing:.02em}
+.ledger-note::before{content:"↳ "; color:var(--brass-dim)}
+.ledger-bar{
+  display:flex; align-items:center; gap:.55rem; padding:.75rem 1.1rem;
+  border-bottom:1px solid var(--line); font-family:var(--mono);
+  font-size:.72rem; color:var(--ink-low); letter-spacing:.04em;
+}
+.ledger-bar .tl{width:11px;height:11px;border-radius:50%;background:var(--line-bright)}
+.ledger-bar .path{margin-left:.6rem}
+.cert{
+  display:grid; grid-template-columns:auto 1fr auto; gap:1rem; align-items:center;
+  padding:1.05rem 1.1rem; border-bottom:1px solid var(--line);
+  font-family:var(--mono); font-size:.85rem; transition:background .25s;
+}
+.cert:last-child{border-bottom:0}
+.cert:hover{background:var(--raise)}
+.cert .stat{display:inline-flex; align-items:center; gap:.6rem; color:var(--ink)}
+.cert .stat i{width:7px;height:7px;border-radius:50%;background:var(--brass);box-shadow:0 0 8px var(--brass);font-style:normal;flex:none}
+.cert .meta{color:var(--ink-low); text-align:left; min-width:0}
+.cert .meta b{color:var(--ink-mid); font-weight:500}
+.cert .meta em{color:var(--brass); font-style:normal}
+.cert .verify{color:var(--ink-low); text-decoration:none; white-space:nowrap; font-size:.8rem; transition:.2s}
+.cert .verify:hover{color:var(--brass)}
+.cert .verify.link::after{content:" →"}
+.cert .verify.none{color:var(--ink-low); opacity:.7}
+@media(max-width:680px){
+  .cert{grid-template-columns:1fr; gap:.35rem}
+  .cert .meta,.cert .verify{padding-left:1.3rem}
+}
+
+/* =============================================================
+   CONTACT / FOOTER
+   ============================================================= */
+.contact{padding-block:clamp(5rem,12vw,9rem); border-top:1px solid var(--line)}
+.contact h2{
+  font-family:var(--display); font-weight:800; letter-spacing:-.03em;
+  font-size:clamp(2.4rem,8vw,6rem); line-height:.95; margin:.3rem 0 2rem;
+}
+.contact h2 a{text-decoration:none; color:transparent; -webkit-text-stroke:1.5px var(--ink); transition:.4s}
+.contact h2 a:hover{color:var(--brass); -webkit-text-stroke-color:var(--brass)}
+.social{display:flex; flex-wrap:wrap; gap:1.4rem 2.2rem; font-family:var(--mono); font-size:.85rem}
+.social a{color:var(--ink-mid); text-decoration:none; display:inline-flex; gap:.55rem; align-items:center; transition:.2s}
+.social a span{color:var(--ink-low)}
+.social a:hover{color:var(--brass)}
+
+footer{
+  border-top:1px solid var(--line); padding:2rem var(--edge);
+  display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem;
+  font-family:var(--mono); font-size:.72rem; color:var(--ink-low); letter-spacing:.04em;
+}
+
+/* scroll reveal */
+.reveal{opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1; transform:none}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none !important; transition:none !important; scroll-behavior:auto !important}
+  .rise,.reveal{opacity:1; transform:none}
+  #spot{display:none}
+}
+</style>
+</head>
+
+<body>
+<div id="spot"></div>
+
+<!-- ===================== NAV ===================== -->
+<nav id="nav">
+  <a href="#top" class="monogram" aria-label="Home">SA</a>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#experience">Experience</a>
+    <a href="#work">Work</a>
+    <a href="#creds">Credentials</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero wrap" id="top">
+  <div class="tag eyebrow rise d1">Tempe, AZ &nbsp;/&nbsp; open to cybersecurity · AI · IT roles</div>
+  <h1 class="bigname">
+    <span class="l1 rise d2">SAM</span>
+    <span class="l2 rise d3">ADALIOGLU</span>
+  </h1>
+  <p class="hero-line rise d4">
+    Computer Science student at Arizona State, focused on <b>cybersecurity</b>. I build networks and security tools in my home lab and certify what I learn. The projects and credentials are below.
+  </p>
+  <div class="hero-meta rise d4">
+    <span><i class="dot"></i>Cybersecurity · IT · AI</span>
+    <span>6 industry credentials</span>
+    <span>CS @ ASU · 3.90 GPA · '26</span>
+  </div>
+</header>
+
+<!-- ===================== ABOUT ===================== -->
+<section class="block" id="about">
+  <div class="wrap">
+    <div class="block-head reveal">
+      <div class="eyebrow">About</div>
+      <h2>Defense you can verify, not just claim.</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-body reveal">
+        <p>I'm Sam, a Computer Science student at Arizona State studying cybersecurity. I graduate in December 2026 with a <b>3.90 GPA</b>.</p>
+        <p>What I care about most is <b>cybersecurity, IT, and AI</b>, and I try to keep up with how each of them is changing. I like learning new things and getting certified as I go, and I'm up to six now. Teaching is a big part of it too. I'm usually the one who ends up explaining things to friends and classmates.</p>
+        <p>These days I work in tech support at ASU, helping faculty and staff with their systems. I'm comfortable across the stack, from networking gear to web apps.</p>
+      </div>
+      <div class="reveal">
+        <div class="stack-title">Skills</div>
+        <div class="chips">
+          <span class="chip">Python</span>
+          <span class="chip">C/C++</span>
+          <span class="chip">Bash</span>
+          <span class="chip">PowerShell</span>
+          <span class="chip">Splunk</span>
+          <span class="chip">Wireshark</span>
+          <span class="chip">pfSense</span>
+          <span class="chip">Proxmox</span>
+          <span class="chip">Nmap</span>
+          <span class="chip">Metasploit</span>
+          <span class="chip">Burp Suite</span>
+          <span class="chip">AWS</span>
+          <span class="chip">Linux</span>
+          <span class="chip">TensorFlow</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== EXPERIENCE ===================== -->
+<section class="block" id="experience">
+  <div class="wrap">
+    <div class="block-head reveal">
+      <div class="eyebrow">Experience</div>
+      <h2>Where I've done the work.</h2>
+    </div>
+
+    <div class="xp reveal">
+      <div class="when">Sep 2025 — Present<b>Tempe, AZ</b></div>
+      <div>
+        <h3>Computer Support Assistant</h3>
+        <div class="org">Arizona State University</div>
+        <ul>
+          <li>Provide technical support for faculty, staff, and students across hardware, software, and network issues.</li>
+          <li>Install, configure, and troubleshoot systems and peripherals; image operating systems; manage Active Directory accounts and ServiceNow tickets.</li>
+          <li>Run hardware diagnostics, PC rebuilds, and workstation setups for university departments.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="xp reveal">
+      <div class="when">May 2025 — Jul 2025<b>El Segundo, CA</b></div>
+      <div>
+        <h3>Software Engineer Intern</h3>
+        <div class="org">Globule Technology &amp; Service Inc</div>
+        <ul>
+          <li>Designed and built the frontend (Angular) and backend (Spring Boot) of a full-stack web application.</li>
+          <li>Built RESTful APIs for dynamic content retrieval and user interactions.</li>
+          <li>Created and deployed an AI prompt to extract structured data from documents.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WORK ===================== -->
+<section class="block" id="work">
+  <div class="wrap">
+    <div class="block-head reveal">
+      <div class="eyebrow">Selected work</div>
+      <h2>Projects worth pointing at.</h2>
+    </div>
+
+    <!-- EDIT href → link each to its GitHub repo -->
+    <a class="proj reveal" href="https://github.com/samB998" target="_blank" rel="noopener">
+      <span class="idx">01</span>
+      <span class="body">
+        <h3>Home Lab — Networking &amp; Security</h3>
+        <p class="desc">An enterprise-grade lab on a Proxmox cluster: a pfSense-segmented network with VLANs, DHCP, and firewall policies; virtual routers running the full routing-protocol zoo (OSPF, IS-IS, RIP, EIGRP, BGP); and a Splunk deployment where I threat-hunt the BOTSv2 dataset with Wireshark and build custom alerts and dashboards.</p>
+        <span class="tags"><span>pfSense</span><span>Proxmox</span><span>Splunk</span><span>Wireshark</span></span>
+      </span>
+      <span class="arrow">↗</span>
+    </a>
+
+    <a class="proj reveal" href="https://github.com/samB998/AI-Powered-SIEM-System-" target="_blank" rel="noopener">
+      <span class="idx">02</span>
+      <span class="body">
+        <h3>AI-Powered SIEM &amp; Anomaly Detection</h3>
+        <p class="desc">A Python SIEM pipeline that ingests security logs, engineers eight features per time window (IP entropy, error ratios, failed logins), and uses an Isolation Forest to catch brute-force, port-scanning, DDoS, and privilege-escalation attacks — with SOAR-style automated response playbooks, severity-tiered alerting, and a four-panel analytics dashboard.</p>
+        <span class="tags"><span>Python</span><span>Isolation Forest</span><span>SOAR</span></span>
+      </span>
+      <span class="arrow">↗</span>
+    </a>
+
+    <a class="proj reveal" href="https://github.com/samB998/interviewmeAI" target="_blank" rel="noopener">
+      <span class="idx">03</span>
+      <span class="body">
+        <h3>MCP-Based Personal AI Assistant</h3>
+        <p class="desc">An agentic assistant (Gradio + a custom MCP server) that answers questions about my background from PDF/resume sources via OpenAI function calling — and actually does things: live Nmap scans, browser navigation, and Pushover push notifications for contact requests. End-to-end tool use, not just chat.</p>
+        <span class="tags"><span>Python</span><span>MCP</span><span>OpenAI</span></span>
+      </span>
+      <span class="arrow">↗</span>
+    </a>
+
+    <a class="proj reveal" href="https://github.com/samB998/LSTM-project" target="_blank" rel="noopener">
+      <span class="idx">04</span>
+      <span class="body">
+        <h3>LSTM Network Traffic Anomaly Detection</h3>
+        <p class="desc">A TensorFlow/Keras LSTM trained on normal traffic (10-step lookback, MinMax scaling, Adam, 80/20 split) that forecasts what should come next and flags error spikes above a mean+3σ threshold as anomalies — catching injected DDoS and exfiltration, scored with precision, recall, and F1.</p>
+        <span class="tags"><span>TensorFlow</span><span>Keras</span><span>LSTM</span></span>
+      </span>
+      <span class="arrow">↗</span>
+    </a>
+
+    <a class="proj reveal" href="https://github.com/samB998/tunnelmangame" target="_blank" rel="noopener">
+      <span class="idx">05</span>
+      <span class="body">
+        <h3>Tunnelman — C++ Arcade Game</h3>
+        <p class="desc">A dig-and-survive arcade game built on a hand-rolled object-oriented actor system that drives every interaction between the player, NPCs, and a destructible environment — player controls, digging, resource collection, and combat. Enemies navigate with BFS pathfinding, line-of-sight detection, and event-driven behavior.</p>
+        <span class="tags"><span>C++</span><span>OOP</span><span>BFS Pathfinding</span></span>
+      </span>
+      <span class="arrow">↗</span>
+    </a>
+  </div>
+</section>
+
+<!-- ===================== CREDENTIALS ===================== -->
+<section class="block" id="creds">
+  <div class="wrap">
+    <div class="block-head reveal">
+      <div class="eyebrow">Credentials</div>
+      <h2>Six credentials, and counting.</h2>
+    </div>
+
+    <div class="ledger reveal">
+      <div class="ledger-bar">
+        <span class="tl"></span><span class="tl"></span><span class="tl"></span>
+        <span class="path">~/sam/credentials — 6 active</span>
+      </div>
+
+      <div class="cert">
+        <span class="stat"><i></i>Penetration Testing Specialist — course</span>
+        <span class="meta"><b>Hack The Box</b> · CPTS · 2025 · <em>299 targets, top 5%</em></span>
+        <a class="verify link" href="https://www.linkedin.com/in/sam-adalioglu/overlay/Project/1481231453/treasury/?profileId=ACoAAFqY954B9KTeHxt5K2WWOnW2IN2keEmBsvs" target="_blank" rel="noopener">transcript</a>
+      </div>
+      <div class="cert">
+        <span class="stat"><i></i>Certified Network Associate</span>
+        <span class="meta"><b>Cisco</b> · CCNA · Dec 6, 2024 · ID CSCO14793352</span>
+        <a class="verify link" href="https://cp.certmetrics.com/cisco/en/public/verify/credential/bcd19f3671ef49e2828a51af36bd1e36" target="_blank" rel="noopener">verify</a>
+      </div>
+      <div class="cert">
+        <span class="stat"><i></i>Cybersecurity Analyst</span>
+        <span class="meta"><b>CompTIA</b> · CySA+ · Jul 29, 2025 · ID COMP001022856865 · <em>supersedes Security+</em></span>
+        <a class="verify link" href="https://www.credly.com/badges/54fcc4b6-ce53-46b0-a9aa-0893e08dcadf/public_url" target="_blank" rel="noopener">verify</a>
+      </div>
+      <div class="cert">
+        <span class="stat"><i></i>Certified System Administrator</span>
+        <span class="meta"><b>Red Hat</b> · RHCSA · Jul 22, 2025 · ID 250-111-051</span>
+        <a class="verify link" href="https://rhtapps.redhat.com/verify?certId=250-111-051" target="_blank" rel="noopener">verify</a>
+      </div>
+      <div class="cert">
+        <span class="stat"><i></i>Solutions Architect – Associate</span>
+        <span class="meta"><b>Amazon Web Services</b> · SAA · Jan 7, 2025 · ID 3fe1a16326714ae5bb4f274cbcba14fb</span>
+        <a class="verify link" href="https://www.credly.com/badges/9c72da3e-66f9-400b-9c74-c2e57b6f32a6/public_url" target="_blank" rel="noopener">verify</a>
+      </div>
+      <div class="cert">
+        <span class="stat"><i></i>Certified Associate Cybersecurity</span>
+        <span class="meta"><b>Fortinet</b> · FCA · Sep 7, 2025 · ID 8000741236SA</span>
+        <a class="verify link" href="https://www.credly.com/badges/7c0a4593-df18-43ef-85e4-4ec27b9378d1/public_url" target="_blank" rel="noopener">verify</a>
+      </div>
+    </div>
+    <p class="ledger-note reveal">Certificates are issued under my legal name, Sinan Adalioglu — I go by Sam.</p>
+  </div>
+</section>
+<section class="contact wrap" id="contact">
+  <div class="eyebrow reveal">Contact</div>
+  <h2 class="reveal"><a href="mailto:samadalioglu@hotmail.com">Let's talk.</a></h2>
+  <div class="social reveal">
+    <a href="mailto:samadalioglu@hotmail.com"><span>[ email ]</span> samadalioglu@hotmail.com</a>
+    <a href="tel:+16029071253"><span>[ phone ]</span> 602-907-1253</a>
+    <a href="https://www.linkedin.com/in/sam-adalioglu/" target="_blank" rel="noopener"><span>[ linkedin ]</span> in/sam-adalioglu</a>
+    <a href="https://github.com/samB998" target="_blank" rel="noopener"><span>[ github ]</span> github.com/samB998</a>
+  </div>
+</section>
+
+<footer>
+  <span>© <span id="yr"></span> Sam Adalioglu</span>
+</footer>
+
+<script>
+/* cursor spotlight */
+const spot = document.getElementById('spot');
+window.addEventListener('pointermove', e=>{
+  spot.style.opacity = 1;
+  spot.style.setProperty('--mx', e.clientX+'px');
+  spot.style.setProperty('--my', e.clientY+'px');
+}, {passive:true});
+
+/* nav background on scroll */
+const nav = document.getElementById('nav');
+const onScroll = ()=> nav.classList.toggle('stuck', window.scrollY > 40);
+onScroll(); window.addEventListener('scroll', onScroll, {passive:true});
+
+/* scroll reveal */
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+}, {threshold:.12, rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+/* year */
+document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
