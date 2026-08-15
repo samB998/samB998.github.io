@@ -475,8 +475,18 @@ footer{
       <span class="arrow">↗</span>
     </a>
 
-    <a class="proj reveal" href="https://github.com/samB998/tunnelmangame" target="_blank" rel="noopener">
+    <a class="proj reveal" href="https://github.com/samB998/elliptic-fraud-detection" target="_blank" rel="noopener">
       <span class="idx">05</span>
+      <span class="body">
+        <h3>Illicit Bitcoin Transaction Detection</h3>
+        <p class="desc">A supervised ML pipeline (XGBoost) that flags illicit transactions in the Elliptic Bitcoin dataset — 203K real blockchain transactions labeled licit/illicit. The focus is the hard part of fraud detection: severe class imbalance, handled with cost-sensitive learning and SMOTE and benchmarked against a no-handling baseline. A temporal train/test split mirrors real deployment, and results are scored on PR-AUC and precision@top-k instead of misleading accuracy.</p>
+        <span class="tags"><span>Python</span><span>XGBoost</span><span>SMOTE</span><span>Imbalanced Data</span></span>
+      </span>
+      <span class="arrow">↗</span>
+    </a>
+
+    <a class="proj reveal" href="https://github.com/samB998/tunnelmangame" target="_blank" rel="noopener">
+      <span class="idx">06</span>
       <span class="body">
         <h3>Tunnelman — C++ Arcade Game</h3>
         <p class="desc">A dig-and-survive arcade game built on a hand-rolled object-oriented actor system that drives every interaction between the player, NPCs, and a destructible environment — player controls, digging, resource collection, and combat. Enemies navigate with BFS pathfinding, line-of-sight detection, and event-driven behavior.</p>
@@ -486,7 +496,7 @@ footer{
     </a>
 
     <a class="proj reveal" href="https://github.com/samB998/SMS-Spam-Detection-Classifier" target="_blank" rel="noopener">
-      <span class="idx">06</span>
+      <span class="idx">07</span>
       <span class="body">
         <h3>SMS Spam Detection Classifier</h3>
         <p class="desc">A Naive Bayes text classifier that flags spam SMS messages, reaching 91.3% accuracy on the SMS Spam Collection dataset (5,574 messages). I handled the NLP preprocessing in NLTK (tokenization, stemming, stop-word removal) with CountVectorizer for features, and tuned the model with GridSearchCV using 5-fold cross-validation and F1 scoring.</p>
