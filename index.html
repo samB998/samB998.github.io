@@ -263,6 +263,35 @@ section.block{padding-block:clamp(4.5rem,10vw,8rem); border-top:1px solid var(--
 }
 
 /* =============================================================
+   HOME LAB — showcase
+   ============================================================= */
+.lab-lead{color:var(--ink-mid); max-width:60ch; margin:0 0 2.6rem}
+.lab-lead b{color:var(--ink); font-weight:600}
+.lab-grid{display:grid; grid-template-columns:1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden}
+@media(min-width:860px){ .lab-grid{grid-template-columns:repeat(3,1fr)} }
+.lab-card{background:linear-gradient(var(--panel),var(--void)); padding:1.9rem 1.6rem; transition:background .25s}
+.lab-card:hover{background:var(--raise)}
+.lab-card .kicker{
+  font-family:var(--mono); font-size:.72rem; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--brass); display:flex; align-items:center; gap:.55rem; margin-bottom:.9rem;
+}
+.lab-card .kicker span{color:var(--ink-low)}
+.lab-card h3{font-family:var(--display); font-weight:700; font-size:1.2rem; letter-spacing:-.01em; margin:0 0 .7rem}
+.lab-card p{color:var(--ink-mid); margin:0 0 1rem; font-size:.95rem}
+.lab-card p:last-of-type{margin-bottom:1.1rem}
+.lab-card .kv{display:flex; flex-wrap:wrap; gap:.4rem}
+.lab-card .kv b{
+  font-family:var(--mono); font-weight:400; font-size:.72rem; color:var(--ink-mid);
+  border:1px solid var(--line-bright); border-radius:100px; padding:.28rem .7rem;
+}
+.lab-strip{
+  display:flex; flex-wrap:wrap; gap:.6rem 1.6rem; margin-top:2rem;
+  font-family:var(--mono); font-size:.78rem; color:var(--ink-low); letter-spacing:.03em;
+}
+.lab-strip span{display:inline-flex; align-items:center; gap:.5rem}
+.lab-strip i{width:6px;height:6px;border-radius:50%;background:var(--brass-dim);font-style:normal;flex:none}
+
+/* =============================================================
    CONTACT / FOOTER
    ============================================================= */
 .contact{padding-block:clamp(5rem,12vw,9rem); border-top:1px solid var(--line)}
@@ -304,6 +333,7 @@ footer{
   <div class="nav-links">
     <a href="#about">About</a>
     <a href="#experience">Experience</a>
+    <a href="#lab">Home Lab</a>
     <a href="#work">Work</a>
     <a href="#creds">Credentials</a>
     <a href="#contact">Contact</a>
@@ -385,6 +415,21 @@ footer{
             <span class="chip">GitHub</span>
           </div>
         </div>
+        <div class="skill-group">
+          <div class="stack-title">Machine Learning &amp; AI</div>
+          <div class="chips">
+            <span class="chip">Supervised Learning</span>
+            <span class="chip">Unsupervised Learning</span>
+            <span class="chip">Neural Networks</span>
+            <span class="chip">Deep Learning</span>
+            <span class="chip">Backpropagation</span>
+            <span class="chip">Anomaly Detection</span>
+            <span class="chip">Model Evaluation</span>
+            <span class="chip">TensorFlow / Keras</span>
+            <span class="chip">scikit-learn</span>
+            <span class="chip">NumPy / Pandas</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -426,6 +471,58 @@ footer{
   </div>
 </section>
 
+<!-- ===================== HOME LAB ===================== -->
+<section class="block" id="lab">
+  <div class="wrap">
+    <div class="block-head reveal">
+      <div class="eyebrow">Home Lab</div>
+      <h2>Built to run like a small enterprise.</h2>
+    </div>
+
+    <p class="lab-lead reveal">
+      A self-hosted lab on a <b>Proxmox VE</b> cluster that I use as a full-scale
+      practice ground — a segmented network, the complete routing-and-switching
+      stack, and a live security-operations pipeline running on top. It's where I
+      turn the things I study and certify into something I've actually built,
+      broken, and defended.
+    </p>
+
+    <div class="lab-grid">
+      <div class="lab-card reveal">
+        <div class="kicker">01 <span>/ Infrastructure</span></div>
+        <h3>Virtualized network</h3>
+        <p>Stood up a multi-node lab on a <b>Proxmox VE</b> cluster and segmented it behind a <b>pfSense</b> firewall — VLANs, DHCP scopes, and firewall policies enforcing hard traffic boundaries between zones.</p>
+        <p>Provisioned <b>Kali</b> and <b>Ubuntu</b> VMs alongside Docker containers to serve as attacker, target, and service hosts across the environment.</p>
+        <div class="kv"><b>Proxmox VE</b><b>pfSense</b><b>VLANs</b><b>DHCP</b><b>Docker</b><b>Kali / Ubuntu</b></div>
+      </div>
+
+      <div class="lab-card reveal">
+        <div class="kicker">02 <span>/ Routing &amp; switching</span></div>
+        <h3>The full protocol stack</h3>
+        <p>Configured and tested every major routing protocol across virtual routers — <b>OSPF</b> and <b>IS-IS</b> (link-state), <b>RIP</b> and <b>EIGRP</b>, and <b>BGP</b> (path-vector) — verifying reachability and path selection across the topology.</p>
+        <p>Spent as much time breaking it as building it: diagnosing why neighbor adjacencies won't form or routes won't propagate, then tracing each failure back to the misconfiguration and fixing it.</p>
+        <p>Layered enterprise switching on top: VLAN trunking, inter-VLAN routing, spanning tree (STP), EtherChannel aggregation, ACLs, and QoS policies.</p>
+        <div class="kv"><b>OSPF</b><b>IS-IS</b><b>BGP</b><b>EIGRP</b><b>RIP</b><b>STP</b><b>EtherChannel</b><b>ACLs</b><b>QoS</b><b>Troubleshooting</b></div>
+      </div>
+
+      <div class="lab-card reveal">
+        <div class="kicker">03 <span>/ Security operations</span></div>
+        <h3>Detection &amp; response</h3>
+        <p>Deployed <b>Splunk</b> as the SIEM and ran threat hunting and incident response against the <b>BOTSv2</b> dataset, pivoting through packet captures in <b>Wireshark</b> to reconstruct attacker activity.</p>
+        <p>Built custom detection alerts and dashboards to surface, correlate, and visualize security events across the lab.</p>
+        <div class="kv"><b>Splunk</b><b>Wireshark</b><b>BOTSv2</b><b>Threat hunting</b><b>IR</b><b>Dashboards</b></div>
+      </div>
+    </div>
+
+    <div class="lab-strip reveal">
+      <span><i></i>Proxmox VE cluster</span>
+      <span><i></i>pfSense-segmented network</span>
+      <span><i></i>5 routing protocols</span>
+      <span><i></i>Splunk SIEM + BOTSv2</span>
+    </div>
+  </div>
+</section>
+
 <!-- ===================== WORK ===================== -->
 <section class="block" id="work">
   <div class="wrap">
@@ -435,18 +532,8 @@ footer{
     </div>
 
     <!-- EDIT href → link each to its GitHub repo -->
-    <a class="proj reveal" href="https://github.com/samB998" target="_blank" rel="noopener">
-      <span class="idx">01</span>
-      <span class="body">
-        <h3>Home Lab — Networking &amp; Security</h3>
-        <p class="desc">An enterprise-grade lab on a Proxmox cluster: a pfSense-segmented network with VLANs, DHCP, and firewall policies; virtual routers running the full routing-protocol zoo (OSPF, IS-IS, RIP, EIGRP, BGP); and a Splunk deployment where I threat-hunt the BOTSv2 dataset with Wireshark and build custom alerts and dashboards.</p>
-        <span class="tags"><span>pfSense</span><span>Proxmox</span><span>Splunk</span><span>Wireshark</span></span>
-      </span>
-      <span class="arrow">↗</span>
-    </a>
-
     <a class="proj reveal" href="https://github.com/samB998/AI-Powered-SIEM-System-" target="_blank" rel="noopener">
-      <span class="idx">02</span>
+      <span class="idx">01</span>
       <span class="body">
         <h3>AI-Powered SIEM &amp; Anomaly Detection</h3>
         <p class="desc">A Python SIEM pipeline that ingests security logs, engineers eight features per time window (IP entropy, error ratios, failed logins), and uses an Isolation Forest to catch brute-force, port-scanning, DDoS, and privilege-escalation attacks — with SOAR-style automated response playbooks, severity-tiered alerting, and a four-panel analytics dashboard.</p>
@@ -456,7 +543,7 @@ footer{
     </a>
 
     <a class="proj reveal" href="https://github.com/samB998/MCP-Based-Personal-AI-Assistant-with-Multi-Agent-Security-Triage" target="_blank" rel="noopener">
-      <span class="idx">03</span>
+      <span class="idx">02</span>
       <span class="body">
         <h3>MCP Assistant + Multi-Agent Security Triage</h3>
         <p class="desc">An agentic assistant (Gradio + a custom MCP server) where an orchestrator picks its own tools via OpenAI function calling. It answers questions about my background using RAG over my PDF/resume (embeddings + retrieval), routes security evidence to four defensive agents — log triage, phishing, config audit, and a CVE agent that runs live web search — and takes real actions: simulated Nmap/ping, browser navigation (Playwright), and Pushover contact alerts. End-to-end tool use, not just chat.</p>
@@ -466,7 +553,7 @@ footer{
     </a>
 
     <a class="proj reveal" href="https://github.com/samB998/LSTM-project" target="_blank" rel="noopener">
-      <span class="idx">04</span>
+      <span class="idx">03</span>
       <span class="body">
         <h3>LSTM Network Traffic Anomaly Detection</h3>
         <p class="desc">A TensorFlow/Keras LSTM trained on normal traffic (10-step lookback, MinMax scaling, Adam, 80/20 split) that forecasts what should come next and flags error spikes above a mean+3σ threshold as anomalies — catching injected DDoS and exfiltration, scored with precision, recall, and F1.</p>
@@ -476,7 +563,7 @@ footer{
     </a>
 
     <a class="proj reveal" href="https://github.com/samB998/elliptic-fraud-detection-" target="_blank" rel="noopener">
-      <span class="idx">05</span>
+      <span class="idx">04</span>
       <span class="body">
         <h3>Illicit Bitcoin Transaction Detection</h3>
         <p class="desc">A supervised ML pipeline (XGBoost) that flags illicit transactions in the Elliptic Bitcoin dataset — 203K real blockchain transactions labeled licit/illicit. The focus is the hard part of fraud detection: severe class imbalance, handled with cost-sensitive learning and SMOTE and benchmarked against a no-handling baseline. A temporal train/test split mirrors real deployment, and results are scored on PR-AUC and precision@top-k instead of misleading accuracy.</p>
@@ -486,7 +573,7 @@ footer{
     </a>
 
     <a class="proj reveal" href="https://github.com/samB998/tunnelmangame" target="_blank" rel="noopener">
-      <span class="idx">06</span>
+      <span class="idx">05</span>
       <span class="body">
         <h3>Tunnelman — C++ Arcade Game</h3>
         <p class="desc">A dig-and-survive arcade game built on a hand-rolled object-oriented actor system that drives every interaction between the player, NPCs, and a destructible environment — player controls, digging, resource collection, and combat. Enemies navigate with BFS pathfinding, line-of-sight detection, and event-driven behavior.</p>
@@ -496,7 +583,7 @@ footer{
     </a>
 
     <a class="proj reveal" href="https://github.com/samB998/SMS-Spam-Detection-Classifier" target="_blank" rel="noopener">
-      <span class="idx">07</span>
+      <span class="idx">06</span>
       <span class="body">
         <h3>SMS Spam Detection Classifier</h3>
         <p class="desc">A Naive Bayes text classifier that flags spam SMS messages, reaching 91.3% accuracy on the SMS Spam Collection dataset (5,574 messages). I handled the NLP preprocessing in NLTK (tokenization, stemming, stop-word removal) with CountVectorizer for features, and tuned the model with GridSearchCV using 5-fold cross-validation and F1 scoring.</p>
